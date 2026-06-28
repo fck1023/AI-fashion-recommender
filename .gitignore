@@ -1,0 +1,33 @@
+# ── 秘密 / 環境 ──────────────────────────────
+.env
+*.token
+hf_token*
+*secret*
+
+# ── Python ──────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+*.egg-info/
+.pytest_cache/
+
+# ── 資料與模型產物(體積大、不進 git;用 HF Hub / Drive 託管)──
+# 用開頭斜線「錨定到 repo 根目錄」,才不會誤殺原始碼裡的 src/aifashion/data/ 套件
+/data/
+/runs/
+/index/
+/thumbs/
+*.tar
+*.npz
+*.npy
+*.faiss
+*.pt
+*.bin
+*.jsonl
+meta.json
+stats.json
+
+# ── 系統 ────────────────────────────────────
+.DS_Store
