@@ -16,8 +16,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 
-# 專案根目錄(本檔所在處),所有相對路徑都以它為基準
-ROOT = Path(__file__).resolve().parent
+# 專案根目錄 = 本檔(src/aifashion/configs.py)往上三層;所有相對路徑以它為基準
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def _path_env(var: str, default: Path) -> Path:
