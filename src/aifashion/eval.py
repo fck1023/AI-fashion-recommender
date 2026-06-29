@@ -74,6 +74,7 @@ def _print_table(metrics: dict, tag: str, ks) -> None:
         print(f"{header}{name:12s}{vals}{row['n']:>10d}")
 
 
+@torch.no_grad()  # 純評估:不追蹤梯度(訓練中呼叫時 img_proj 仍 requires_grad,否則 .numpy() 會炸)
 def report_zero_shot_vs_finetuned(model, loader, max_n: int = 1500,
                                   tag: str = "", ks=(1, 5, 10)) -> dict:
     """同一批驗證資料,比較「不訓練」與「訓練後影像頭」的 R@K。
