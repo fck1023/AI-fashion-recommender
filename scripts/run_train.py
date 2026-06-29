@@ -19,6 +19,7 @@ from aifashion.train import train_image_head
 def main() -> None:
     ap = argparse.ArgumentParser(description="訓練影像投影頭(anchor-to-T0)")
     ap.add_argument("--prefer", choices=["drive", "hf"], default="drive", help="資料來源(drive 找不到自動回退 hf)")
+    ap.add_argument("--shards-dir", default=None, help="顯式 .tar shards 目錄(如 Drive 路徑)")
     ap.add_argument("--cap-map", default=None, help="cap_map.jsonl 路徑(套用 BLIP 強化 caption)")
     ap.add_argument("--steps", type=int, default=None)
     ap.add_argument("--lr", type=float, default=None)
@@ -32,7 +33,7 @@ def main() -> None:
     model = AnchoredCLIP.from_pretrained(CFG.model.name, CFG.model.pretrained, device=args.device)
     cap_map = load_cap_map(args.cap_map) if args.cap_map else None
     train_stream, val_stream, source = build_streams(
-        prefer=args.prefer, copy_ssd=args.copy_ssd, cap_map=cap_map)
+        prefer=args.prefer, shards_dir=args.shards_dir, copy_ssd=args.copy_ssd, cap_map=cap_map)
     print(f"資料來源:{source}")
 
     train_loader = make_loader(train_stream, model.preprocess_train, model.tokenizer, args.batch_size)

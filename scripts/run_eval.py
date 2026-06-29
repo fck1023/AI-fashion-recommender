@@ -19,6 +19,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description="評估 R@K(zero-shot vs finetuned)")
     ap.add_argument("--heads", default=None, help="訓練好的投影頭 .pt(不給=Identity 起點)")
     ap.add_argument("--prefer", choices=["drive", "hf"], default="drive")
+    ap.add_argument("--shards-dir", default=None, help="顯式 .tar shards 目錄(如 Drive 路徑)")
     ap.add_argument("--max-samples", type=int, default=None)
     ap.add_argument("--batch-size", type=int, default=None)
     ap.add_argument("--run-dir", default=None, help="compare.json 輸出目錄(預設 configs.run_dir)")
@@ -30,7 +31,7 @@ def main() -> None:
         model.load_heads(args.heads)
         print(f"已載入投影頭:{args.heads}")
 
-    _, val_stream, source = build_streams(prefer=args.prefer)
+    _, val_stream, source = build_streams(prefer=args.prefer, shards_dir=args.shards_dir)
     print(f"資料來源:{source}")
     val_loader = make_loader(val_stream, model.preprocess_eval, model.tokenizer, args.batch_size)
 

@@ -22,6 +22,7 @@ def main() -> None:
     ap.add_argument("--heads", default=None, help="訓練好的投影頭 .pt(搭配 --project 使用)")
     ap.add_argument("--project", action="store_true", help="用訓練後投影 I1(預設用 zero-shot I0)")
     ap.add_argument("--prefer", choices=["drive", "hf"], default="drive")
+    ap.add_argument("--shards-dir", default=None, help="顯式 .tar shards 目錄(如 Drive 路徑)")
     ap.add_argument("--max-n", type=int, default=0, help="只抽前 N 張(0=全部)")
     ap.add_argument("--batch-size", type=int, default=None)
     ap.add_argument("--run-dir", default=None)
@@ -34,7 +35,7 @@ def main() -> None:
         model.load_heads(args.heads)
         print(f"已載入投影頭:{args.heads}")
 
-    gallery_stream, _, source = build_streams(prefer=args.prefer)
+    gallery_stream, _, source = build_streams(prefer=args.prefer, shards_dir=args.shards_dir)
     print(f"資料來源:{source}")
     loader = make_loader(gallery_stream, model.preprocess_eval, model.tokenizer, args.batch_size)
 

@@ -131,10 +131,13 @@ def copy_to_ssd(urls: list[str], ssd_dir: str = "/content/wds_cache") -> list[st
 
 
 # ── 建立 train/val 串流(Drive 優先,HF 保底)────────────────────────────
-def build_streams_from_drive(*, copy_ssd: bool = False,
+def build_streams_from_drive(*, shards_dir=None, copy_ssd: bool = False,
                              cap_map: dict[str, str] | None = None):
-    """從本地/Drive 的 .tar shards 建串流;找不到回 (None, None)。"""
-    urls = list_shards()
+    """從本地/Drive 的 .tar shards 建串流;找不到回 (None, None)。
+
+    shards_dir 顯式指定 shards 目錄(優先於 configs/環境變數,免去 import 順序的坑)。
+    """
+    urls = list_shards(shards_dir)
     if not urls:
         return None, None
     if copy_ssd:
@@ -170,15 +173,16 @@ def build_streams_from_hf():
     return (lambda: iter_hf(ds_tr)), (lambda: iter_hf(ds_va))
 
 
-def build_streams(prefer: str = "drive", *, copy_ssd: bool = False,
+def build_streams(prefer: str = "drive", *, shards_dir=None, copy_ssd: bool = False,
                   cap_map: dict[str, str] | None = None) -> tuple:
     """建立 (train_stream, val_stream, source);prefer='drive' 找不到 shards 時自動回退 HF。
 
+    shards_dir:顯式指定 .tar shards 目錄(例如 Colab 上 Drive 的 shards 路徑)。
     要套用 BLIP 強化 caption:先 `cap_map = captions.load_cap_map(run_dir/'cap_map.jsonl')`
     再傳進來,串流當下就會用覆寫鏈蓋掉弱啟發式。
     """
     if prefer == "drive":
-        train, val = build_streams_from_drive(copy_ssd=copy_ssd, cap_map=cap_map)
+        train, val = build_streams_from_drive(shards_dir=shards_dir, copy_ssd=copy_ssd, cap_map=cap_map)
         if train is not None:
             return train, val, "DRIVE_WDS"
         print("⚠️ Drive shards 未找到,改用 HF 保底。")
