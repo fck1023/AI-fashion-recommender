@@ -37,9 +37,9 @@ class ModelConfig:
 class TrainConfig:
     batch_size: int = 32
     grad_accum: int = 2             # 等效 batch = 32 * 2
-    lr: float = 5e-5
+    lr: float = 5e-4                # 對齊實際執行的 Cell 6.5A-reset(不穩可降 1e-4)
     epochs: int = 3
-    steps_per_epoch: int = 2000
+    steps_per_epoch: int = 2000     # 當作「總訓練步數」用(notebook 是單一 while-loop 到 STEPS)
     amp: bool = True                # 混合精度,省顯存、加速
     seed: int = 42
 
