@@ -76,9 +76,32 @@ def s4_model() -> None:
     assert torch.allclose(i0, i1, atol=1e-4), "Identity-init 影像頭應使 I1 ≈ I0"
 
 
+def s5_train_loop() -> None:
+    """合成 mini loader 跑幾步訓練迴圈 + R@K 報告(驗證 loss/AMP/存檔路徑全通,純 CPU)。"""
+    import pathlib
+    import tempfile
+
+    import torch
+    from aifashion.model import AnchoredCLIP
+    from aifashion.train import train_image_head
+
+    m = AnchoredCLIP.from_pretrained(device="cpu")
+    tokens = m.tokenizer(["a red dress"] * 8)
+
+    def fake_loader():  # 產出 (images, tokens, captions, keys) contract
+        return [(torch.randn(8, 3, 224, 224), tokens, ["a red dress"] * 8,
+                 [f"k{i}" for i in range(8)]) for _ in range(3)]
+
+    save_path = pathlib.Path(tempfile.mkdtemp()) / "heads.pt"
+    train_image_head(m, fake_loader(), fake_loader(),
+                     steps=6, grad_accum=2, amp=False, save_path=save_path)
+    assert save_path.exists(), "train_image_head 應存出影像頭"
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description="AI Fashion 套件 dry-run smoke test")
     ap.add_argument("--model", action="store_true", help="額外載 CLIP backbone(下載權重,CPU 即可)")
+    ap.add_argument("--train", action="store_true", help="額外跑合成資料的迷你訓練迴圈(含 R@K 報告)")
     args = ap.parse_args()
 
     _stage("1) 套件 import + 設定", s1_imports)
@@ -86,6 +109,8 @@ def main() -> None:
     _stage("3) R@K + 合成 FAISS 索引 roundtrip", s3_recall_and_index)
     if args.model:
         _stage("4) 載 AnchoredCLIP + 前向 + Identity 起點", s4_model)
+    if args.train:
+        _stage("5) 迷你訓練迴圈 + R@K 報告(合成資料)", s5_train_loop)
 
     ok = sum(1 for _, passed in _results if passed)
     print(f"\n=== Smoke test:{ok}/{len(_results)} 階段通過 ===")
