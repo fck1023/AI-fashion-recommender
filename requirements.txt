@@ -5,6 +5,7 @@ open_clip_torch>=2.24      # ViT-B-32 (openai) backbone
 
 # 資料:WebDataset 串流 + Fashionpedia
 webdataset>=0.2
+datasets>=2.0                # HF 保底來源(build_streams_from_hf)
 pandas>=2.0
 numpy>=1.24
 pillow>=10.0
