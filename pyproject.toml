@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aifashion"
+version = "0.1.0"
+description = "CLIP 穿搭檢索(anchor-to-T0)+ 雙雲版本化資料管線"
+readme = "README.md"
+requires-python = ">=3.10"
+dynamic = ["dependencies"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# 相依套件以 requirements.txt 為單一來源(避免兩處重複維護)
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
