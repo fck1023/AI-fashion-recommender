@@ -121,4 +121,4 @@ PyTorch · open_clip(CLIP ViT-B-32)· BLIP · WebDataset · FAISS / hnswlib · G
 
 ## 一點背景
 
-這原本是「第二屆半導體 AI 與 ChatGPT 應用班・第二組」的專題(組長:范希凱;指導:張志勇、蒯思齊老師)。我把當時跑得出結果、但很難維護的 notebook,重構成現在這個模組化、設定與機密分離、保留實際邏輯並標註改動的版本;原始 notebook 留在 `notebooks/` 供「重構前後」對照。
+這原本是「第二屆半導體 AI 與 ChatGPT 應用班・第二組」的專題。把當時跑得出結果、但很難維護的 notebook,重構成現在這個模組化、設定與機密分離、保留實際邏輯並標註改動的版本;原始 notebook 留在 `notebooks/` 供「重構前後」對照。
